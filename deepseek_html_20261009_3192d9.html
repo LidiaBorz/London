@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>London Weather Worksheet — Full Course</title>
+    <style>
+        :root {
+            --london-red: #c96b6b;
+            --london-blue: #8faec4;
+            --london-cream: #f7f3ed;
+            --london-fog: #e2e8f0;
+            --london-dark: #4a5568;
+            --london-gold: #d4b88c;
+            --ok: #4a7c59;
+            --err: #b06a6a;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: linear-gradient(180deg, var(--london-fog) 0%, #dbe4ed 50%, var(--london-blue) 100%);
+            background-attachment: fixed;
+            color: var(--london-dark);
+            line-height: 1.7;
+            padding: 40px 20px;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .london-stickers {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none; z-index: 0; overflow: hidden;
+        }
+
+        .sticker {
+            position: absolute; opacity: 0.15;
+            filter: grayscale(20%) sepia(10%);
+            animation: float 6s ease-in-out infinite;
+            user-select: none;
+        }
+
+        .sticker-bus      { top: 6%;  left: 2%;   font-size: 5em;   animation-delay: 0s; }
+        .sticker-booth    { top: 20%; right: 2%;  font-size: 5.5em; animation-delay: 1s; }
+        .sticker-bigben   { top: 40%; left: 1%;   font-size: 6em;   animation-delay: 2s; }
+        .sticker-bridge   { top: 60%; right: 2%;  font-size: 5em;   animation-delay: 0.5s; }
+        .sticker-eye      { top: 78%; left: 3%;   font-size: 4.5em; animation-delay: 1.5s; }
+        .sticker-umbrella { top: 10%; left: 48%;  font-size: 3.5em; animation-delay: 3s; }
+        .sticker-tea      { top: 50%; right: 8%;  font-size: 3.5em; animation-delay: 2.5s; }
+        .sticker-corgi    { top: 88%; right: 6%;  font-size: 4em;   animation-delay: 0.8s; }
+        .sticker-flag     { top: 30%; right: 12%; font-size: 3em;   animation-delay: 1.8s; }
+        .sticker-crown    { top: 2%;  right: 22%; font-size: 3em;   animation-delay: 2.2s; }
+        .sticker-tube     { top: 68%; left: 12%;  font-size: 3.5em; animation-delay: 0.3s; }
+        .sticker-phone    { top: 92%; left: 40%;  font-size: 3em;   animation-delay: 1.2s; }
+        .sticker-rose     { top: 15%; right: 35%; font-size: 3em;   animation-delay: 2.8s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(-3deg); }
+            50%      { transform: translateY(-15px) rotate(3deg); }
+        }
+
+        .container {
+            max-width: 900px; margin: 0 auto;
+            background: var(--london-cream);
+            padding: 50px 60px;
+            border-radius: 4px;
+            box-shadow: 0 10px 40px rgba(74, 85, 104, 0.25), 0 2px 10px rgba(0,0,0,0.08);
+            border-top: 8px solid var(--london-red);
+            border-bottom: 4px solid var(--london-blue);
+            position: relative; z-index: 1;
+        }
+
+        h1 {
+            text-align: center; color: var(--london-red);
+            font-size: 2.4em; font-weight: normal;
+            letter-spacing: 2px; margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        h1::after {
+            content: ''; display: block; width: 80px; height: 3px;
+            background: var(--london-gold); margin: 15px auto 0; border-radius: 2px;
+        }
+
+        .subtitle {
+            text-align: center; font-style: italic; color: var(--london-blue);
+            font-size: 1.05em; margin-bottom: 30px; padding-bottom: 20px;
+            border-bottom: 1px dashed var(--london-blue); letter-spacing: 1px;
+        }
+
+        .subtitle::before { content: '🇬🇧 '; }
+
+        .progress-bar-wrapper {
+            background: rgba(143, 174, 196, 0.2);
+            height: 8px; border-radius: 4px;
+            margin-bottom: 30px; overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--london-blue), var(--london-red));
+            width: 0%; transition: width 0.4s ease; border-radius: 4px;
+        }
+
+        .progress-text {
+            text-align: center; font-size: 0.85em; color: var(--london-blue);
+            margin-top: -22px; margin-bottom: 25px; font-style: italic;
+        }
+
+        h2 {
+            color: var(--london-dark); font-size: 1.25em; font-weight: normal;
+            margin-top: 50px; margin-bottom: 20px; padding-bottom: 10px;
+            border-bottom: 2px solid var(--london-gold);
+            display: flex; align-items: center; gap: 12px; letter-spacing: 0.5px;
+        }
+
+        h2[data-icon]::before { font-size: 1.2em; color: var(--london-blue); }
+        h2[data-icon="1"]::before { content: '☂'; }
+        h2[data-icon="2"]::before { content: '🌫'; }
+        h2[data-icon="3"]::before { content: '🎡'; }
+        h2[data-icon="4"]::before { content: '⏰'; }
+        h2[data-icon="5"]::before { content: '🔗'; }
+        h2[data-icon="6"]::before { content: '✎'; }
+        h2[data-icon="7"]::before { content: '⚠'; }
+        h2[data-icon="8"]::before { content: '💬'; }
+
+        .task {
+            background: rgba(226, 232, 240, 0.45);
+            padding: 20px 25px; border-radius: 4px; margin-bottom: 15px;
+            border-left: 4px solid var(--london-blue);
+            transition: all 0.3s ease;
+        }
+
+        .task:hover {
+            background: rgba(226, 232, 240, 0.75);
+            border-left-color: var(--london-red);
+        }
+
+        .question {
+            margin-bottom: 18px; font-size: 0.97em;
+            position: relative;
+        }
+
+        .question:last-child { margin-bottom: 0; }
+
+        /* Стиль скобок: то, что нужно вписать */
+        .gap {
+            color: var(--london-red);
+            font-weight: bold;
+            font-style: italic;
+        }
+
+        /* Подсказка-инфинитив за скобками */
+        .prompt {
+            color: #8a9aab;
+            font-style: italic;
+            font-size: 0.9em;
+        }
+
+        input[type="text"] {
+            padding: 10px 14px;
+            border: 1px solid var(--london-blue);
+            border-radius: 3px;
+            font-size: 0.95em;
+            font-family: 'Georgia', serif;
+            background: #fff;
+            width: 230px;
+            margin-left: 8px;
+            transition: all 0.3s ease;
+            color: var(--london-dark);
+        }
+
+        input[type="text"]::placeholder {
+            color: #a0aec0; font-style: italic; font-size: 0.9em;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--london-red);
+            box-shadow: 0 0 0 4px rgba(201, 107, 107, 0.15);
+            outline: none;
+        }
+
+        input.long-input {
+            width: 100%; max-width: 600px;
+            margin-left: 0; margin-top: 8px;
+        }
+
+        input.correct-field {
+            border-color: var(--ok);
+            background-color: #eaf4ec;
+            box-shadow: 0 0 0 4px rgba(74, 124, 89, 0.15);
+        }
+
+        input.error-field {
+            border-color: var(--london-red);
+            background-color: #faf0f0;
+            animation: shake 0.4s ease;
+        }
+
+        input.revealed-field {
+            border-color: var(--london-gold);
+            background-color: #fbf6ec;
+            box-shadow: 0 0 0 4px rgba(212, 184, 140, 0.25);
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25%      { transform: translateX(-6px); }
+            75%      { transform: translateX(6px); }
+        }
+
+        /* === Всплывающая подсказка === */
+        .tooltip {
+            position: fixed;
+            background: #fff;
+            border-radius: 6px;
+            padding: 12px 18px;
+            font-size: 0.9em;
+            font-family: 'Georgia', serif;
+            box-shadow: 0 8px 25px rgba(74, 85, 104, 0.25);
+            z-index: 9999;
+            max-width: 380px;
+            line-height: 1.5;
+            opacity: 0;
+            transform: translateY(-8px);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            pointer-events: none;
+        }
+
+        .tooltip.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .tooltip.tip {
+            border-left: 5px solid var(--london-gold);
+            color: var(--london-dark);
+        }
+
+        .tooltip.tip::before {
+            content: '💡 Подсказка';
+            display: block;
+            font-size: 0.8em;
+            color: var(--london-gold);
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            font-family: sans-serif;
+        }
+
+        .tooltip.answer {
+            border-left: 5px solid var(--london-red);
+            color: var(--london-dark);
+        }
+
+        .tooltip.answer::before {
+            content: '📖 Правильный ответ';
+            display: block;
+            font-size: 0.8em;
+            color: var(--london-red);
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            font-family: sans-serif;
+        }
+
+        .tooltip .answer-text {
+            font-size: 1.1em;
+            color: var(--london-red);
+            font-weight: bold;
+            display: block;
+            margin-top: 4px;
+            font-family: 'Georgia', serif;
+        }
+
+        button {
+            background-color: var(--london-red);
+            color: white; border: none;
+            padding: 15px 45px;
+            font-size: 1.05em;
+            font-family: 'Georgia', serif;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-radius: 3px;
+            cursor: pointer;
+            display: block;
+            margin: 45px auto 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(201, 107, 107, 0.3);
+        }
+
+        button:hover {
+            background-color: #b85a5a;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(201, 107, 107, 0.4);
+        }
+
+        button:active { transform: translateY(0); }
+        button::after { content: ' ☔'; margin-left: 8px; font-size: 0.95em; }
+
+        .result {
+            text-align: center; font-size: 1.1em;
+            margin-top: 25px; padding: 20px;
+            border-radius: 4px; font-family: 'Georgia', serif;
+            letter-spacing: 0.5px;
+        }
+
+        .correct {
+            background-color: #e6f0e6; color: var(--ok);
+            border: 1px solid #b8d4b8; border-left: 5px solid var(--ok);
+        }
+
+        .incorrect {
+            background-color: #f5e6e6; color: var(--err);
+            border: 1px solid #d4b8b8; border-left: 5px solid var(--err);
+        }
+
+        .feedback {
+            font-size: 0.85em; margin-left: 10px;
+            font-weight: bold; font-family: sans-serif;
+        }
+
+        .feedback.ok { color: var(--ok); }
+        .feedback.err { color: var(--err); }
+
+        .hint {
+            font-size: 0.85em; color: #8a9aab;
+            font-style: italic; display: block; margin-top: 3px;
+        }
+
+        .enter-hint {
+            text-align: center; font-size: 0.85em;
+            color: #8a9aab; font-style: italic;
+            margin-top: 30px; padding-top: 15px;
+            border-top: 1px dashed var(--london-blue);
+        }
+
+        .tip-box {
+            background: rgba(212, 184, 140, 0.15);
+            border-left: 4px solid var(--london-gold);
+            padding: 12px 18px; border-radius: 3px;
+            font-size: 0.88em; color: var(--london-dark);
+            font-style: italic; margin: 15px 0;
+        }
+
+        .tip-box strong { color: var(--london-red); font-style: normal; }
+
+        @media (max-width: 700px) {
+            .sticker { font-size: 2.5em !important; opacity: 0.10; }
+            .container { padding: 25px 20px; }
+            input[type="text"] {
+                width: 100%; margin-left: 0;
+                margin-top: 5px; display: block;
+            }
+            h1 { font-size: 1.6em; }
+            .tooltip { max-width: 90vw; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="london-stickers" aria-hidden="true">
+    <div class="sticker sticker-bus">🚌</div>
+    <div class="sticker sticker-booth">☎️</div>
+    <div class="sticker sticker-bigben">🕰️</div>
+    <div class="sticker sticker-bridge">🌉</div>
+    <div class="sticker sticker-eye">🎡</div>
+    <div class="sticker sticker-umbrella">☂️</div>
+    <div class="sticker sticker-tea">☕</div>
+    <div class="sticker sticker-corgi">🐕</div>
+    <div class="sticker sticker-flag">🇬🇧</div>
+    <div class="sticker sticker-crown">👑</div>
+    <div class="sticker sticker-tube">🚇</div>
+    <div class="sticker sticker-phone">📞</div>
+    <div class="sticker sticker-rose">🌹</div>
+</div>
+
+<div class="container">
+    <h1>London Weather</h1>
+    <div class="subtitle">Full Practice Worksheet — Sections A · B · C</div>
+
+    <div class="progress-bar-wrapper">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div class="progress-text" id="progressText">Прогресс: 0 / 0</div>
+
+    <!-- ================= TASK 1 ================= -->
+    <h2 data-icon="1">Task 1. Fill in the blanks</h2>
+    <div class="tip-box">
+        <strong>Как читать:</strong> то, что нужно вписать, заключено в <span class="gap">(...)</span>. Слово в <span class="prompt">[квадратных скобках]</span> — подсказка (инфинитив глагола). Вводите только то, что было в скобках.
+    </div>
+    <div class="task">
+        <div class="question">
+            1. Look outside! It <span class="gap">(...)</span> with rain. <span class="prompt">[pour]</span>
+            <input type="text" id="q1" placeholder="..." data-answer="is pouring" data-hint="Настоящее длительное: to be + V-ing. Фраза означает «идёт сильный ливень».">
+            <span class="feedback" id="f1"></span>
+        </div>
+        <div class="question">
+            2. We couldn't go to the beach yesterday because it <span class="gap">(...)</span> all day. <span class="prompt">[rain + сильно]</span>
+            <input type="text" id="q2" placeholder="..." data-answer="rained heavily|was raining heavily" data-hint="Прошлое время + коллокация «сильный дождь». Вспомните: heavy rain, а не strong rain.">
+            <span class="feedback" id="f2"></span>
+        </div>
+        <div class="question">
+            3. The forecast says the weather <span class="gap">(...)</span> later today. <span class="prompt">[deteriorate]</span>
+            <input type="text" id="q3" placeholder="..." data-answer="is likely to deteriorate|will deteriorate|is deteriorating" data-hint="Прогноз на будущее. be likely to + инфинитив или will + инфинитив. Глагол «ухудшаться».">
+            <span class="feedback" id="f3"></span>
+        </div>
+        <div class="question">
+            4. Listen! A strong wind <span class="gap">(...)</span> outside. <span class="prompt">[blow]</span>
+            <input type="text" id="q4" placeholder="..." data-answer="is blowing" data-hint="Слово Listen! — сигнал Present Continuous.">
+            <span class="feedback" id="f4"></span>
+        </div>
+        <div class="question">
+            5. The storm was terrible. Several rivers <span class="gap">(...)</span>. <span class="prompt">[burst their banks]</span>
+            <input type="text" id="q5" placeholder="..." data-answer="burst their banks" data-hint="Past Simple. Глагол burst имеет одинаковые формы: burst – burst – burst. Фраза «вышли из берегов».">
+            <span class="feedback" id="f5"></span>
+        </div>
+        <div class="question">
+            6. Don't go out without a coat — it <span class="gap">(...)</span> today. <span class="prompt">[be + ледяной холод]</span>
+            <input type="text" id="q6" placeholder="..." data-answer="is freezing cold" data-hint="Present Simple. Фраза «ледяной холод» = freezing cold.">
+            <span class="feedback" id="f6"></span>
+        </div>
+        <div class="question">
+            7. Yesterday freak weather conditions <span class="gap">(...)</span> the south-west. <span class="prompt">[hit]</span>
+            <input type="text" id="q7" placeholder="..." data-answer="hit" data-hint="Past Simple. Все три формы одинаковые: hit – hit – hit. «Обрушились на».">
+            <span class="feedback" id="f7"></span>
+        </div>
+        <div class="question">
+            8. We <span class="gap">(...)</span> in the torrential rain last night. <span class="prompt">[get + промокнуть]</span>
+            <input type="text" id="q8" placeholder="..." data-answer="got soaked" data-hint="Past Simple. Фраза «промокнуть насквозь» = get soaked.">
+            <span class="feedback" id="f8"></span>
+        </div>
+        <div class="question">
+            9. The wind was light this morning, but it <span class="gap">(...)</span> now. <span class="prompt">[pick up]</span>
+            <input type="text" id="q9" placeholder="..." data-answer="is picking up" data-hint="Present Continuous. Фразовый глагол «усиливается».">
+            <span class="feedback" id="f9"></span>
+        </div>
+        <div class="question">
+            10. If we don't hurry, we <span class="gap">(...)</span>. <span class="prompt">[get soaked]</span>
+            <input type="text" id="q10" placeholder="..." data-answer="will get soaked|are going to get soaked" data-hint="Условное 1-го типа: If + Present Simple, will + инфинитив. Или be going to.">
+            <span class="feedback" id="f10"></span>
+        </div>
+    </div>
+
+    <!-- ================= TASK 2 ================= -->
+    <h2 data-icon="2">Task 2. Choose the correct word</h2>
+    <div class="tip-box">
+        В скобках <span class="gap">(...)</span> — варианты на выбор. Впишите только одно слово.
+    </div>
+    <div class="task">
+        <div class="question">
+            1. We had to drive very slowly because of the <span class="gap">(...)</span> rain. <span class="prompt">[heavy / strong]</span>
+            <input type="text" id="q11" placeholder="..." data-answer="heavy" data-hint="С rain, snow, traffic используется это прилагательное.">
+            <span class="feedback" id="f11"></span>
+        </div>
+        <div class="question">
+            2. The snow was lovely and <span class="gap">(...)</span> this morning. <span class="prompt">[crisp / hard]</span>
+            <input type="text" id="q12" placeholder="..." data-answer="crisp" data-hint="Прилагательное означает «свежий, хрустящий» — про снег.">
+            <span class="feedback" id="f12"></span>
+        </div>
+        <div class="question">
+            3. There will be a <span class="gap">(...)</span> frost tonight. <span class="prompt">[hard / soft]</span>
+            <input type="text" id="q13" placeholder="..." data-answer="hard" data-hint="Сильный мороз. Антоним — light frost. Слово soft не используется.">
+            <span class="feedback" id="f13"></span>
+        </div>
+        <div class="question">
+            4. The wind was <span class="gap">(...)</span> this morning, but it's picking up. <span class="prompt">[light / weak]</span>
+            <input type="text" id="q14" placeholder="..." data-answer="light" data-hint="Слабый ветер. Коллокация high / strong / light / biting winds.">
+            <span class="feedback" id="f14"></span>
+        </div>
+        <div class="question">
+            5. The plane couldn't land because of <span class="gap">(...)</span> fog. <span class="prompt">[thick / strong]</span>
+            <input type="text" id="q15" placeholder="..." data-answer="thick" data-hint="Густой туман. Синоним — dense.">
+            <span class="feedback" id="f15"></span>
+        </div>
+        <div class="question">
+            6. Avoid going on the beach at midday when the sun is <span class="gap">(...)</span>. <span class="prompt">[strong / heavy]</span>
+            <input type="text" id="q16" placeholder="..." data-answer="strong" data-hint="Коллокация из секции B.">
+            <span class="feedback" id="f16"></span>
+        </div>
+        <div class="question">
+            7. There are <span class="gap">(...)</span> of fog on the east coast. <span class="prompt">[patches / sheets]</span>
+            <input type="text" id="q17" placeholder="..." data-answer="patches" data-hint="Небольшие, локальные участки тумана.">
+            <span class="feedback" id="f17"></span>
+        </div>
+        <div class="question">
+            8. A <span class="gap">(...)</span> of fog covered the whole valley. <span class="prompt">[blanket / patch]</span>
+            <input type="text" id="q18" placeholder="..." data-answer="blanket" data-hint="Плотный, обширный слой тумана. Дословно «одеяло».">
+            <span class="feedback" id="f18"></span>
+        </div>
+        <div class="question">
+            9. <span class="gap">(...)</span> rain made road conditions difficult. <span class="prompt">[Driving / Heavy]</span>
+            <input type="text" id="q19" placeholder="..." data-answer="driving" data-hint="Дождь, который падает быстро и сильно, хлещет.">
+            <span class="feedback" id="f19"></span>
+        </div>
+        <div class="question">
+            10. The wind was <span class="gap">(...)</span> cold, so we hurried home. <span class="prompt">[biting / heavy]</span>
+            <input type="text" id="q20" placeholder="..." data-answer="biting" data-hint="Ледяной, кусачий ветер. Дословно «кусающий».">
+            <span class="feedback" id="f20"></span>
+        </div>
+    </div>
+
+    <!-- ================= TASK 3 ================= -->
+    <h2 data-icon="3">Task 3. Translate into English</h2>
+    <div class="tip-box">
+        Впишите в поле только то, что должно стоять вместо <span class="gap">(...)</span>.
+    </div>
+    <div class="task">
+        <div class="question">
+            1. Вчера аномальные погодные условия <span class="gap">(...)</span> на юго-запад Англии. <span class="prompt">[обрушились]</span><br>
+            Yesterday, freak weather conditions <input type="text" id="q21" placeholder="..." data-answer="hit" data-hint="Past Simple. Одинаковые формы: hit – hit – hit."> the south-west.
+            <span class="feedback" id="f21"></span>
+        </div>
+        <div class="question">
+            2. Штормовые ветры <span class="gap">(...)</span> большой ущерб имуществу. <span class="prompt">[нанесли]</span><br>
+            Gale-force winds <input type="text" id="q22" placeholder="..." data-answer="caused" data-hint="Past Simple, правильный глагол с -ed. «Причинили»."> a lot of damage to property.
+            <span class="feedback" id="f22"></span>
+        </div>
+        <div class="question">
+            3. Крыши были <span class="gap">(...)</span>, а заборы повалены. <span class="prompt">[сорваны]</span><br>
+            Roofs were <input type="text" id="q23" placeholder="..." data-answer="torn" data-hint="Третья форма глагола tear: tear – tore – torn."> off.
+            <span class="feedback" id="f23"></span>
+        </div>
+        <div class="question">
+            4. Мы <span class="gap">(...)</span> насквозь под проливным дождем. <span class="prompt">[промокли]</span><br>
+            We <input type="text" id="q24" placeholder="..." data-answer="got" data-hint="Past Simple от get."> soaked.
+            <span class="feedback" id="f24"></span>
+        </div>
+        <div class="question">
+            5. Я люблю лежать на пляже и <span class="gap">(...)</span> солнцем. <span class="prompt">[наслаждаться]</span><br>
+            I love lying on the beach and <input type="text" id="q25" placeholder="..." data-answer="soaking" data-hint="После love ... and используется герундий (-ing). Фраза soak up the sunshine."> up the sunshine.
+            <span class="feedback" id="f25"></span>
+        </div>
+        <div class="question">
+            6. Здесь <span class="gap">(...)</span> с тех пор, как мы приехали. <span class="prompt">[непрерывное солнце]</span><br>
+            We have had <input type="text" id="q26" placeholder="..." data-answer="unbroken sunshine" data-hint="Коллокация из секции A. Дословно «непрерывное солнце»."> ever since we arrived.
+            <span class="feedback" id="f26"></span>
+        </div>
+        <div class="question">
+            7. Похоже, <span class="gap">(...)</span>. <span class="prompt">[будет дождь]</span><br>
+            It certainly <input type="text" id="q27" placeholder="..." data-answer="looks like rain" data-hint="Фраза из секции A. Три слова.">.
+            <span class="feedback" id="f27"></span>
+        </div>
+        <div class="question">
+            8. Погода <span class="gap">(...)</span>. <span class="prompt">[ухудшается]</span><br>
+            The weather is <input type="text" id="q28" placeholder="..." data-answer="deteriorating|getting worse" data-hint="Формальное слово из секции B или неформальный вариант.">.
+            <span class="feedback" id="f28"></span>
+        </div>
+        <div class="question">
+            9. Несколько рек <span class="gap">(...)</span>. <span class="prompt">[вышли из берегов]</span><br>
+            Several rivers <input type="text" id="q29" placeholder="..." data-answer="burst their banks" data-hint="Фраза из секции C. Дословно «лопнули свои берега».">.
+            <span class="feedback" id="f29"></span>
+        </div>
+        <div class="question">
+            10. В палатке <span class="gap">(...)</span>. <span class="prompt">[ледяной холод]</span><br>
+            It's <input type="text" id="q30" placeholder="..." data-answer="freezing cold" data-hint="Фраза из секции A. Дословно «ледяной холод»."> in the tent.
+            <span class="feedback" id="f30"></span>
+        </div>
+    </div>
+
+    <!-- ================= TASK 4 ================= -->
+    <h2 data-icon="4">Task 4. Make sentences from the words</h2>
+    <div class="tip-box">
+        Составьте предложение из слов. Вводите предложение целиком в поле.
+    </div>
+    <div class="task">
+        <div class="question">
+            1. sunshine / unbroken / had / We / have / since / arrived / we <br>
+            <input type="text" id="q31" class="long-input" placeholder="Введите предложение..." data-answer="we have had unbroken sunshine since we arrived|we have had unbroken sunshine ever since we arrived" data-hint="Начните с подлежащего We. Present Perfect: have + had. Фраза «непрерывное солнце с тех пор, как мы приехали».">
+            <span class="feedback" id="f31"></span>
+        </div>
+        <div class="question">
+            2. cold / freezing / tent / It's / the / in <br>
+            <input type="text" id="q32" class="long-input" placeholder="Введите предложение..." data-answer="it's freezing cold in the tent|it is freezing cold in the tent" data-hint="Начните с It's (it is). Фраза «ледяной холод» + предлог места in the tent.">
+            <span class="feedback" id="f32"></span>
+        </div>
+        <div class="question">
+            3. banks / their / rivers / Several / burst <br>
+            <input type="text" id="q33" class="long-input" placeholder="Введите предложение..." data-answer="several rivers burst their banks" data-hint="Порядок: подлежащее + глагол + притяжательное местоимение + существительное.">
+            <span class="feedback" id="f33"></span>
+        </div>
+        <div class="question">
+            4. like / looks / rain / it / Certainly <br>
+            <input type="text" id="q34" class="long-input" placeholder="Введите предложение..." data-answer="it certainly looks like rain|certainly it looks like rain" data-hint="Наречие certainly ставится после подлежащего it или в начале.">
+            <span class="feedback" id="f34"></span>
+        </div>
+        <div class="question">
+            5. rain / pouring / It's / with / been <br>
+            <input type="text" id="q35" class="long-input" placeholder="Введите предложение..." data-answer="it's been pouring with rain|it has been pouring with rain" data-hint="Present Perfect Continuous: have/has been + V-ing.">
+            <span class="feedback" id="f35"></span>
+        </div>
+        <div class="question">
+            6. wind / blowing / strong / is / A <br>
+            <input type="text" id="q36" class="long-input" placeholder="Введите предложение..." data-answer="a strong wind is blowing" data-hint="Порядок: артикль + прилагательное + существительное + глагол в Present Continuous.">
+            <span class="feedback" id="f36"></span>
+        </div>
+    </div>
+
+    <!-- ================= TASK 5 ================= -->
+    <h2 data-icon="5">Task 5. Match the halves — введите вторую половину фразы</h2>
+    <div class="tip-box">
+        <strong>Пример:</strong> It's pouring → <em>with rain</em>. Пишите только пропущенную часть.
+    </div>
+    <div class="task">
+        <div class="question">
+            1. It's pouring <span class="gap">(...)</span>.
+            <input type="text" id="q37" placeholder="..." data-answer="with rain" data-hint="Два слова: предлог + существительное. Дословно «с дождём».">
+            <span class="feedback" id="f37"></span>
+        </div>
+        <div class="question">
+            2. It looks like <span class="gap">(...)</span>.
+            <input type="text" id="q38" placeholder="..." data-answer="rain" data-hint="Одно слово — «дождь».">
+            <span class="feedback" id="f38"></span>
+        </div>
+        <div class="question">
+            3. We got <span class="gap">(...)</span>.
+            <input type="text" id="q39" placeholder="..." data-answer="soaked" data-hint="Причастие прошедшего времени от soak. «Промокли насквозь».">
+            <span class="feedback" id="f39"></span>
+        </div>
+        <div class="question">
+            4. The rivers burst <span class="gap">(...)</span>.
+            <input type="text" id="q40" placeholder="..." data-answer="their banks" data-hint="Притяжательное местоимение + существительное «берега».">
+            <span class="feedback" id="f40"></span>
+        </div>
+        <div class="question">
+            5. There is a break in the <span class="gap">(...)</span>.
+            <input type="text" id="q41" placeholder="..." data-answer="clouds" data-hint="Множественное число от cloud. Фраза «просвет в облаках».">
+            <span class="feedback" id="f41"></span>
+        </div>
+        <div class="question">
+            6. We were soaking up the <span class="gap">(...)</span>.
+            <input type="text" id="q42" placeholder="..." data-answer="sunshine" data-hint="Существительное из секции A — «солнечный свет». Не sun, а более полное слово.">
+            <span class="feedback" id="f42"></span>
+        </div>
+        <div class="question">
+            7. The wind is picking <span class="gap">(...)</span>.
+            <input type="text" id="q43" placeholder="..." data-answer="up" data-hint="Фразовый глагол, послелог из двух букв. «Усиливается».">
+            <span class="feedback" id="f43"></span>
+        </div>
+        <div class="question">
+            8. Thick fog is coming <span class="gap">(...)</span>.
+            <input type="text" id="q44" placeholder="..." data-answer="down" data-hint="Наречие направления — «вниз».">
+            <span class="feedback" id="f44"></span>
+        </div>
+        <div class="question">
+            9. There will be a hard <span class="gap">(...)</span>.
+            <input type="text" id="q45" placeholder="..." data-answer="frost" data-hint="Существительное, означающее «мороз».">
+            <span class="feedback" id="f45"></span>
+        </div>
+        <div class="question">
+            10. The storm caused a lot of damage to <span class="gap">(...)</span>.
+            <input type="text" id="q46" placeholder="..." data-answer="property" data-hint="Существительное, означающее «имущество».">
+            <span class="feedback" id="f46"></span>
+        </div>
+    </div>
+
+    <!-- ================= TASK 6 ================= -->
+    <h2 data-icon="6">Task 6. Paraphrase — используйте изученную фразу</h2>
+    <div class="tip-box">
+        <strong>Пример:</strong> "It's raining very heavily." → It's <em>pouring with rain</em>.
+    </div>
+    <div class="task">
+        <div class="question">
+            1. It's raining very heavily. <br>
+            It's <span class="gap">(...)</span>.
+            <input type="text" id="q47" placeholder="..." data-answer="pouring with rain" data-hint="Синонимичная фраза из секции A. Дословно «льёт с дождём».">
+            <span class="feedback" id="f47"></span>
+        </div>
+        <div class="question">
+            2. The weather is getting worse. <br>
+            The weather is <span class="gap">(...)</span>.
+            <input type="text" id="q48" placeholder="..." data-answer="deteriorating" data-hint="Одно формальное слово из секции B — «ухудшаться».">
+            <span class="feedback" id="f48"></span>
+        </div>
+        <div class="question">
+            3. We got completely wet in the rain. <br>
+            We <span class="gap">(...)</span>.
+            <input type="text" id="q49" placeholder="..." data-answer="got soaked" data-hint="Коллокация из секции A: get + причастие. «Промокнуть насквозь».">
+            <span class="feedback" id="f49"></span>
+        </div>
+        <div class="question">
+            4. It's extremely hot today. <br>
+            It's <span class="gap">(...)</span> today.
+            <input type="text" id="q50" placeholder="..." data-answer="scorching hot" data-hint="Фраза из секции A. Дословно «обжигающе жарко».">
+            <span class="feedback" id="f50"></span>
+        </div>
+        <div class="question">
+            5. The wind became stronger. <br>
+            The wind <span class="gap">(...)</span>.
+            <input type="text" id="q51" placeholder="..." data-answer="picked up" data-hint="Фразовый глагол из секции B. Past Simple, правильный глагол с -ed.">
+            <span class="feedback" id="f51"></span>
+        </div>
+        <div class="question">
+            6. The river flooded. <br>
+            The river <span class="gap">(...)</span>.
+            <input type="text" id="q52" placeholder="..." data-answer="burst its banks" data-hint="Фраза из секции C. Дословно «лопнула свои берега».">
+            <span class="feedback" id="f52"></span>
+        </div>
+        <div class="question">
+            7. It looks as if it's going to rain. <br>
+            It <span class="gap">(...)</span>.
+            <input type="text" id="q53" placeholder="..." data-answer="looks like rain" data-hint="Коллокация из секции A. Три слова.">
+            <span class="feedback" id="f53"></span>
+        </div>
+        <div class="question">
+            8. There was no cloud in the sky all week. <br>
+            We had <span class="gap">(...)</span> all week.
+            <input type="text" id="q54" placeholder="..." data-answer="unbroken sunshine" data-hint="Коллокация из секции A. Дословно «непрерывное солнце».">
+            <span class="feedback" id="f54"></span>
+        </div>
+    </div>
+
+    <!-- ================= TASK 7 ================= -->
+    <h2 data-icon="7">Task 7. Find and correct the mistake</h2>
+    <div class="tip-box">
+        В каждом предложении есть <strong>одна ошибка</strong>. Напишите правильное слово/фразу.
+    </div>
+    <div class="task">
+        <div class="question">
+            1. It rained <u>strongly</u> all day. → <span class="gap">(...)</span>
+            <input type="text" id="q55" placeholder="..." data-answer="heavily" data-hint="С дождём используется не strong, а heavy. Вспомните коллокацию heavy rain.">
+            <span class="feedback" id="f55"></span>
+        </div>
+        <div class="question">
+            2. We got <u>wet</u> in the rain. → <span class="gap">(...)</span>
+            <input type="text" id="q56" placeholder="..." data-answer="soaked" data-hint="Более сильное слово из секции A — «промокли насквозь».">
+            <span class="feedback" id="f56"></span>
+        </div>
+        <div class="question">
+            3. There will be a <u>soft</u> frost tonight. → <span class="gap">(...)</span>
+            <input type="text" id="q57" placeholder="..." data-answer="light" data-hint="С frost используется hard или light, но не soft.">
+            <span class="feedback" id="f57"></span>
+        </div>
+        <div class="question">
+            4. The sun was very <u>heavy</u> at midday. → <span class="gap">(...)</span>
+            <input type="text" id="q58" placeholder="..." data-answer="strong" data-hint="С солнцем используется strong sun.">
+            <span class="feedback" id="f58"></span>
+        </div>
+        <div class="question">
+            5. Several rivers <u>broke</u> their banks. → <span class="gap">(...)</span>
+            <input type="text" id="q59" placeholder="..." data-answer="burst" data-hint="Глагол из секции C. Все три формы одинаковые.">
+            <span class="feedback" id="f59"></span>
+        </div>
+        <div class="question">
+            6. It's <u>pouring with rain</u> all day yesterday. → <span class="gap">(...)</span>
+            <input type="text" id="q60" placeholder="..." data-answer="poured|was pouring" data-hint="Yesterday — сигнал Past Simple или Past Continuous.">
+            <span class="feedback" id="f60"></span>
+        </div>
+        <div class="question">
+            7. The wind <u>died up</u> in the evening. → <span class="gap">(...)</span>
+            <input type="text" id="q61" placeholder="..." data-answer="died down" data-hint="Фразовый глагол из секции B. Антоним к pick up.">
+            <span class="feedback" id="f61"></span>
+        </div>
+        <div class="question">
+            8. We were <u>soaking up the sun</u> on the beach. → <span class="gap">(...)</span>
+            <input type="text" id="q62" placeholder="..." data-answer="sunshine" data-hint="В коллокации используется более полное слово из секции A.">
+            <span class="feedback" id="f62"></span>
+        </div>
+    </div>
+
+    <!-- ================= TASK 8 ================= -->
+    <h2 data-icon="8">Task 8. Complete the dialogue</h2>
+    <div class="tip-box">
+        Заполните пропуски в диалоге, используя изученные фразы. Форма глаголов может меняться.
+    </div>
+    <div class="task">
+        <div class="question">
+            <b>A:</b> Hi, Mark! How was your trip to the seaside?<br>
+            <b>B:</b> Terrible! It <span class="gap">(...)</span> the whole week. <span class="prompt">[pour with rain]</span>
+            <input type="text" id="q63" placeholder="..." data-answer="poured with rain|was pouring with rain" data-hint="Past Simple или Past Continuous. Фраза «лить как из ведра».">
+            <span class="feedback" id="f63"></span>
+        </div>
+        <div class="question">
+            <b>A:</b> Oh no! Did you get wet?<br>
+            <b>B:</b> We <span class="gap">(...)</span> on the first day. <span class="prompt">[get soaked]</span>
+            <input type="text" id="q64" placeholder="..." data-answer="got soaked" data-hint="Past Simple. Коллокация «промокнуть насквозь».">
+            <span class="feedback" id="f64"></span>
+        </div>
+        <div class="question">
+            And in the tent it was <span class="gap">(...)</span>. <span class="prompt">[freezing cold]</span>
+            <input type="text" id="q65" placeholder="..." data-answer="freezing cold" data-hint="Фраза «ледяной холод» из секции A.">
+            <span class="feedback" id="f65"></span>
+        </div>
+        <div class="question">
+            <b>A:</b> What a nightmare! And what about the weather now?<br>
+            <b>B:</b> Well, the forecast says it <span class="gap">(...)</span> later today. <span class="prompt">[deteriorate]</span>
+            <input type="text" id="q66" placeholder="..." data-answer="is likely to deteriorate|will deteriorate" data-hint="Прогноз на будущее. Формальное слово «ухудшаться».">
+            <span class="feedback" id="f66"></span>
+        </div>
+        <div class="question">
+            <b>A:</b> Look outside — it certainly <span class="gap">(...)</span>. <span class="prompt">[look like rain]</span><br>
+            <b>B:</b> Yes, and the wind <span class="gap">(...)</span> too. <span class="prompt">[pick up]</span>
+            <input type="text" id="q67" placeholder="..." data-answer="looks like rain" data-hint="Present Simple. Коллокация из секции A.">
+            <span class="feedback" id="f67"></span>
+            <input type="text" id="q68" placeholder="..." data-answer="is picking up" data-hint="Present Continuous. Фразовый глагол «усиливается».">
+            <span class="feedback" id="f68"></span>
+        </div>
+        <div class="question">
+            <b>A:</b> Did you hear about the storm in the south-west?<br>
+            <b>B:</b> Yes! Gale-force winds <span class="gap">(...)</span> a lot of damage. <span class="prompt">[cause]</span><br>
+            And several rivers <span class="gap">(...)</span>. <span class="prompt">[burst their banks]</span>
+            <input type="text" id="q69" placeholder="..." data-answer="caused" data-hint="Past Simple от cause — «причинили».">
+            <span class="feedback" id="f69"></span>
+            <input type="text" id="q70" placeholder="..." data-answer="burst their banks" data-hint="Фраза из секции C. Три слова.">
+            <span class="feedback" id="f70"></span>
+        </div>
+    </div>
+
+    <button onclick="checkAll()">Check All Answers</button>
+    <div id="finalResult" class="result"></div>
+
+    <div class="enter-hint">
+        💡 Вводите ответ и нажимайте <b>Enter</b>.
+        <br>1-я ошибка — всплывёт <b>подсказка</b>. 2-я ошибка — покажется <b>правильный ответ</b>.
+        <br>Подсветка: <span style="color:var(--ok)">зелёный</span> = верно, <span style="color:var(--err)">красный</span> = ошибка, <span style="color:var(--london-gold)">золотой</span> = показан ответ.
+    </div>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+    function normalize(str) {
+        return str.trim().toLowerCase()
+                  .replace(/[.,!?;:—–\-']/g, '')
+                  .replace(/\s+/g, ' ');
+    }
+
+    const attempts = {};
+    const tooltip = document.getElementById('tooltip');
+    let tooltipTimer = null;
+
+    function showTooltip(targetInput, htmlContent, type) {
+        const rect = targetInput.getBoundingClientRect();
+        tooltip.className = 'tooltip ' + type;
+        tooltip.innerHTML = htmlContent;
+
+        tooltip.style.visibility = 'hidden';
+        tooltip.classList.add('visible');
+        tooltip.style.visibility = 'visible';
+
+        const tooltipRect = tooltip.getBoundingClientRect();
+        let top = rect.bottom + 10;
+        let left = rect.left + rect.width / 2 - tooltipRect.width / 2;
+
+        if (top + tooltipRect.height > window.innerHeight - 10) {
+            top = rect.top - tooltipRect.height - 10;
+        }
+        if (left < 10) left = 10;
+        if (left + tooltipRect.width > window.innerWidth - 10) {
+            left = window.innerWidth - tooltipRect.width - 10;
+        }
+
+        tooltip.style.top = top + 'px';
+        tooltip.style.left = left + 'px';
+
+        clearTimeout(tooltipTimer);
+        tooltipTimer = setTimeout(() => {
+            tooltip.classList.remove('visible');
+        }, 5000);
+    }
+
+    function checkField(input) {
+        const feedbackId = 'f' + input.id.replace('q', '');
+        const feedback = document.getElementById(feedbackId);
+        const rawAnswer = input.dataset.answer || '';
+        const hint = input.dataset.hint || 'Проверьте форму и правописание.';
+        const accepted = rawAnswer.split('|').map(s => normalize(s));
+        const userAnswer = normalize(input.value);
+
+        if (userAnswer === '') {
+            input.classList.remove('correct-field', 'error-field', 'revealed-field');
+            if (feedback) { feedback.textContent = ''; feedback.className = 'feedback'; }
+            return null;
+        }
+
+        const isCorrect = accepted.includes(userAnswer);
+
+        if (isCorrect) {
+            input.classList.remove('error-field', 'revealed-field');
+            input.classList.add('correct-field');
+            if (feedback) { feedback.textContent = '✓'; feedback.className = 'feedback ok'; }
+            attempts[input.id] = 0;
+            return true;
+        }
+
+        const id = input.id;
+        attempts[id] = (attempts[id] || 0) + 1;
+
+        if (attempts[id] === 1) {
+            input.classList.remove('correct-field', 'revealed-field');
+            input.classList.add('error-field');
+            if (feedback) { feedback.textContent = '✗ подсказка'; feedback.className = 'feedback err'; }
+            showTooltip(input, hint, 'tip');
+            return false;
+        } else {
+            input.classList.remove('correct-field', 'error-field');
+            input.classList.add('revealed-field');
+            if (feedback) { feedback.textContent = '→ ответ показан'; feedback.className = 'feedback err'; }
+
+            const correctAnswer = rawAnswer.split('|')[0];
+            showTooltip(input, `Правильный ответ:<span class="answer-text">${correctAnswer}</span>`, 'answer');
+            return false;
+        }
+    }
+
+    function updateProgress() {
+        const inputs = document.querySelectorAll('input[type="text"]');
+        const correct = document.querySelectorAll('input.correct-field').length;
+        const total = inputs.length;
+        const percent = total ? (correct / total) * 100 : 0;
+        document.getElementById('progressBar').style.width = percent + '%';
+        document.getElementById('progressText').textContent = `Прогресс: ${correct} / ${total}`;
+    }
+
+    function checkAll() {
+        const inputs = document.querySelectorAll('input[type="text"]');
+        let score = 0;
+        let answered = 0;
+
+        inputs.forEach(input => {
+            const result = checkField(input);
+            if (result !== null) {
+                answered++;
+                if (result) score++;
+            }
+        });
+
+        updateProgress();
+
+        const resultDiv = document.getElementById('finalResult');
+        const total = inputs.length;
+
+        if (answered === 0) {
+            resultDiv.className = 'result incorrect';
+            resultDiv.textContent = '⚠ Заполните хотя бы одно поле.';
+            return;
+        }
+
+        resultDiv.textContent = `Your score: ${score} / ${total}`;
+
+        if (score === total) {
+            resultDiv.className = 'result correct';
+            resultDiv.textContent += ' 🎉 Brilliant! You\'ve mastered the weather phrases!';
+        } else if (score >= total * 0.7) {
+            resultDiv.className = 'result correct';
+            resultDiv.textContent += ' 👍 Good job! Just a little more practice.';
+        } else if (score >= total * 0.4) {
+            resultDiv.className = 'result incorrect';
+            resultDiv.textContent += ' 📖 Not bad, but review the phrases again.';
+        } else {
+            resultDiv.className = 'result incorrect';
+            resultDiv.textContent += ' 📚 Keep going! Review the phrases and try again.';
+        }
+    }
+
+    document.querySelectorAll('input[type="text"]').forEach(input => {
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                checkField(this);
+                updateProgress();
+                if (this.classList.contains('correct-field')) {
+                    const allInputs = Array.from(document.querySelectorAll('input[type="text"]'));
+                    const idx = allInputs.indexOf(this);
+                    if (idx < allInputs.length - 1) {
+                        allInputs[idx + 1].focus();
+                    }
+                }
+            }
+        });
+
+        input.addEventListener('input', function() {
+            if (this.classList.contains('correct-field') || this.classList.contains('error-field') || this.classList.contains('revealed-field')) {
+                if (this.classList.contains('revealed-field')) {
+                    this.classList.remove('revealed-field');
+                    this.classList.add('error-field');
+                } else {
+                    this.classList.remove('correct-field', 'error-field');
+                }
+                const feedbackId = 'f' + this.id.replace('q', '');
+                const feedback = document.getElementById(feedbackId);
+                if (feedback) { feedback.textContent = ''; feedback.className = 'feedback'; }
+                updateProgress();
+            }
+        });
+
+        input.addEventListener('focus', function() {
+            tooltip.classList.remove('visible');
+        });
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('input[type="text"]') && e.target !== tooltip) {
+            tooltip.classList.remove('visible');
+        }
+    });
+
+    updateProgress();
+</script>
+
+</body>
+</html>
